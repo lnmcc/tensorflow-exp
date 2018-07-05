@@ -23,6 +23,26 @@ print(sess.run(loss))
 optimizer = tf.train.GradientDescentOptimizer(0.01)
 train = optimizer.minimize(loss)
 
-for i in range(100):
-    _, loss_value = sess.run((train, loss))
-    print(loss_value)
+##for i in range(100):
+##    _, loss_value = sess.run((train, loss))
+##    print(loss_value)
+my_image = tf.zeros([10, 299, 299, 3])
+r = tf.rank(my_image)
+print(sess.run(my_image))
+print(sess.run(r))
+print(my_image.shape[1])
+
+rank_three_tensor = tf.ones([3, 4, 5])
+print(sess.run(rank_three_tensor))
+matrix = tf.reshape(rank_three_tensor, [6, 10])
+print(sess.run(matrix))
+matrixB = tf.reshape(matrix, [3, -1])
+print(sess.run(matrixB))
+matrixAlt = tf.reshape(matrixB, [4, 3, -1])
+print(sess.run(matrixAlt))
+
+constant = tf.constant([1, 2, 3])
+tensor = constant * constant
+print(tensor.eval(session=sess))
+
+
