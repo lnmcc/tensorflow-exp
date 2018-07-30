@@ -41,16 +41,16 @@ with tf.Session() as sess:
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
-    training_steps = 1000
+    training_steps = 10000
     for step in range(training_steps):
         sess.run([train_op])
         
-        if step % 10 == 0:
-            print("loss: %f", sess.run([total_loss]))
+        if step % 100 == 0:
+            print("loss: ", sess.run([total_loss]))
 
     evaluate(sess, X, Y)
 
     coord.request_stop()
     coord.join(threads)
-    
+
     sess.close()
