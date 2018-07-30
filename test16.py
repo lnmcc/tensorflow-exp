@@ -32,4 +32,25 @@ def evaluate(sess, X, Y):
     print(sess.run(inference([[80., 25.]])))
     print(sess.run(inference([[65., 25.]])))
 
+with tf.Session() as sess:
+    tf.global_variables_initializer().run()
+    X, Y = inputs()
+    total_loss = loss(X, Y)
+    train_op = train(total_loss)
 
+    coord = tf.train.Coordinator()
+    threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+    training_steps = 1000
+    for step in range(training_steps):
+        sess.run([train_op])
+        
+        if step % 10 == 0:
+            print("loss: %f", sess.run([total_loss]))
+
+    evaluate(sess, X, Y)
+
+    coord.request_stop()
+    coord.join(threads)
+    
+    sess.close()
