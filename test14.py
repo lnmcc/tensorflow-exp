@@ -28,12 +28,14 @@ with graph.as_default():
             tf.summary.scalar("average_summary", avg)
 
         with tf.name_scope("global_ops"):
-            init = tf.global_variables_initializer()
+            init_g = tf.global_variables_initializer()
+            init_l = tf.local_variables_initializer()
             merged_summaries = tf.summary.merge_all()
 
 sess = tf.Session(graph=graph)
 writer = tf.summary.FileWriter('./improved_graph', graph)
-sess.run(init)
+sess.run(init_g)
+# sess.run(init_l)
 
 def read_cvs(batch_size, file_name, record_defaults):
     filename_queue = tf.train.string_input_producer([os.path.dirname(__file__) + 
@@ -48,8 +50,9 @@ def read_cvs(batch_size, file_name, record_defaults):
 
 def run_graph(input_tensor):
     feed_dict = {a: input_tensor}
-    _, step, summary = sess.run([output, increment_step, merged_summaries],
+    _, step, summary, br = sess.run([output, increment_step, merged_summaries, b],
                     feed_dict=feed_dict)
+    print("b = %d" % br)
     writer.add_summary(summary, global_step=step)
 
 run_graph([2, 8])
