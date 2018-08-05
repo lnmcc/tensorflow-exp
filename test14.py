@@ -37,17 +37,6 @@ writer = tf.summary.FileWriter('./improved_graph', graph)
 sess.run(init_g)
 # sess.run(init_l)
 
-def read_cvs(batch_size, file_name, record_defaults):
-    filename_queue = tf.train.string_input_producer([os.path.dirname(__file__) + 
-                        "/" + file_name])
-    reader = tf.TextLineReader(skip_header_lines=1)
-    key, value = reader.read(filename_queue)
-    decorded = tf.decode_csv(value, record_defaults=record_defaults)
-    return tf.train.shuffle_batch(decorded,
-                                  batch_size=batch_size,
-                                  capacity=batch_size * 50,
-                                  min_after_dequeue=batch_size)
-
 def run_graph(input_tensor):
     feed_dict = {a: input_tensor}
     _, step, summary, br = sess.run([output, increment_step, merged_summaries, b],

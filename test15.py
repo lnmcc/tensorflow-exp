@@ -21,10 +21,7 @@ def read_cvs(batch_size, file_name, record_defaults):
     key, value = reader.read(filename_queue)
 
     decorded = tf.decode_csv(value, record_defaults=record_defaults)
-    return tf.train.shuffle_batch(decorded,
-                                  batch_size=batch_size,
-                                  capacity=batch_size * 50,
-                                  min_after_dequeue=batch_size)
+    return tf.train.shuffle_batch(decorded, batch_size=batch_size, capacity=batch_size * 50, min_after_dequeue=batch_size)
 
 def inputs():
     print("inputs()")
@@ -54,21 +51,32 @@ def evaluate(sess, X, Y):
 
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
-    X, Y = inputs()    
-    total_loss = loss(X, Y)
-    train_op = train(total_loss)
+    #X, Y = inputs()
+    #total_loss = loss(X, Y)
+    #train_op = train(total_loss)
+
+    passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
+        read_cvs(100, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
+            [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
 
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-    training_steps = 1000
-    for step in range(training_steps):
-        sess.run([train_op])
+    #training_steps = 100
+    #for step in range(training_steps):
+     #   sess.run([train_op])
 
-        if step % 100 == 0:
-            print("loss: ", sess.run([total_loss]))
+     #   if step % 10 == 0:
+    #       print("loss: ", sess.run([total_loss]))
 
-    evaluate(sess, X, Y)
+    print(sess.run(passenger_id))
+    print(sess.run(survived))
+
+    #evaluate(sess, X, Y)
     coord.request_stop()
     coord.join(threads) 
+
+    #writer = tf.summary.FileWriter('./board', graph=tf.get_default_graph())
+    #writer.flush()
+    #writer.close()
 
     sess.close()
