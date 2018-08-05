@@ -1,6 +1,15 @@
 import tensorflow as tf
 import os
 
+W = tf.Variable(tf.zeros([5, 1]), name="weights")
+b = tf.Variable(0., name="bias")
+
+def combine_inputs(X):
+    return tf.matmul(X, W) + b
+
+def inference(X):
+    return tf.sigmoid(combine_inputs(X))
+
 def read_cvs(batch_size, file_name, record_defaults):
     filename_queue = tf.train.string_input_producer([os.path.dirname(__file__) + 
                         "/" + file_name])
