@@ -10,11 +10,16 @@ def combine_inputs(X):
 def inference(X):
     return tf.sigmoid(combine_inputs(X))
 
+def loss(X, Y):
+    return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=combine_inputs(X), logits=Y))
+
 def read_cvs(batch_size, file_name, record_defaults):
-    filename_queue = tf.train.string_input_producer([os.path.dirname(__file__) + 
-                        "/" + file_name])
+    print("read_csv(), file_name: %s" % file_name)
+    filename_queue = tf.train.string_input_producer([file_name])
+    print("filename_queue: %s" % file_name)
     reader = tf.TextLineReader(skip_header_lines=1)
     key, value = reader.read(filename_queue)
+
     decorded = tf.decode_csv(value, record_defaults=record_defaults)
     return tf.train.shuffle_batch(decorded,
                                   batch_size=batch_size,
@@ -22,9 +27,11 @@ def read_cvs(batch_size, file_name, record_defaults):
                                   min_after_dequeue=batch_size)
 
 def inputs():
+    print("inputs()")
     passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
-        read_cvs(100, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.cvs",
-            [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [""]])
+        read_cvs(100, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
+            [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
+
     is_first_class = tf.to_float(tf.equal(pclass, [1]))
     is_second_class = tf.to_float(tf.equal(pclass, [2]))
     is_third_class = tf.to_float(tf.equal(pclass, [3]))
@@ -47,7 +54,7 @@ def evaluate(sess, X, Y):
 
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
-    X, Y = inputs()
+    X, Y = inputs()    
     total_loss = loss(X, Y)
     train_op = train(total_loss)
 
@@ -62,6 +69,6 @@ with tf.Session() as sess:
 
     evaluate(sess, X, Y)
     coord.request_stop()
-    coord.join(threads)
+    coord.join(threads) 
 
     sess.close()
