@@ -56,7 +56,7 @@ with tf.Session() as sess:
     #train_op = train(total_loss)
 
     passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
-        read_cvs(100, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
+        read_cvs(100, "./datasets/train.csv",
             [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
 
     coord = tf.train.Coordinator()
@@ -67,9 +67,9 @@ with tf.Session() as sess:
 
      #   if step % 10 == 0:
     #       print("loss: ", sess.run([total_loss]))
-
-    print(sess.run(passenger_id))
-    print(sess.run(survived))
+    for setp in range(200):
+        print(sess.run(passenger_id))
+        print(sess.run(survived))
 
     #evaluate(sess, X, Y)
     coord.request_stop()
