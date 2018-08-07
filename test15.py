@@ -67,7 +67,7 @@ with tf.Session() as sess:
         sess.run([train_op])
 
         #print("X: ", sess.run(X))
-        #print("Y: ", sess.run(Y))
+        print("Y: ", sess.run(Y))
 
         if step % 100 == 0:
            print("loss: ", sess.run([total_loss]))
