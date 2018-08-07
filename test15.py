@@ -11,7 +11,7 @@ def inference(X):
     return tf.sigmoid(combine_inputs(X))
 
 def loss(X, Y):
-    return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=combine_inputs(X), logits=Y))
+    return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=inference(X), logits=Y))
 
 def read_cvs(batch_size, file_name, record_defaults):
     print("read_csv(), file_name: %s" % file_name)
@@ -54,20 +54,23 @@ def evaluate(sess, X, Y):
 
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
-    #X, Y = inputs()
-    #total_loss = loss(X, Y)
-    #train_op = train(total_loss)
+    X, Y = inputs()
+    total_loss = loss(X, Y)
+    train_op = train(total_loss)
 
     #passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
+<<<<<<< HEAD
     data = read_cvs(20, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
             [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
+=======
+     #   read_cvs(100, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
+      #      [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
+>>>>>>> 89544b6c25d118b3dedb2794a8a4c7b070623ccb
 
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
-    #training_steps = 100
-    #for step in range(training_steps):
-     #   sess.run([train_op])
 
+<<<<<<< HEAD
      #   if step % 10 == 0:
     #       print("loss: ", sess.run([total_loss]))
     #for step in range(10):
@@ -76,8 +79,22 @@ with tf.Session() as sess:
     #print(sess.run(name))
     
     print(sess.run(data))
+=======
+    training_steps = 10000
+    for step in range(training_steps):
+        sess.run([train_op])
 
-    #evaluate(sess, X, Y)
+        #print("X: ", sess.run(X))
+        print("Y: ", sess.run(Y))
+
+        if step % 100 == 0:
+           print("loss: ", sess.run([total_loss]))
+
+    #print(sess.run(passenger_id))
+    #print(sess.run(survived))
+>>>>>>> 89544b6c25d118b3dedb2794a8a4c7b070623ccb
+
+    evaluate(sess, X, Y)
     coord.request_stop()
     coord.join(threads) 
 
