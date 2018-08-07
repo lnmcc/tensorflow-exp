@@ -22,6 +22,9 @@ def read_cvs(batch_size, file_name, record_defaults):
 
     decorded = tf.decode_csv(value, record_defaults=record_defaults)
     return tf.train.shuffle_batch(decorded, batch_size=batch_size, capacity=batch_size * 50, min_after_dequeue=batch_size)
+    #return tf.train.batch(decorded, batch_size=batch_size, capacity=batch_size * 50)
+    #return decorded
+
 
 def inputs():
     print("inputs()")
@@ -55,8 +58,8 @@ with tf.Session() as sess:
     #total_loss = loss(X, Y)
     #train_op = train(total_loss)
 
-    passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
-        read_cvs(100, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
+    #passenger_id, survived, pclass, name, sex, age, sibsp, parch, ticket, fare, cabin, embarked = \
+    data = read_cvs(20, "/Users/sjie/Projects/tensorflow/proj/tensorflow-exp/datasets/train.csv",
             [[0.0], [0.0], [0], [""], [""], [0.0], [0.0], [0.0], [""], [0.0], [""], [""]])
 
     coord = tf.train.Coordinator()
@@ -67,9 +70,12 @@ with tf.Session() as sess:
 
      #   if step % 10 == 0:
     #       print("loss: ", sess.run([total_loss]))
+    #for step in range(10):
 
-    print(sess.run(passenger_id))
-    print(sess.run(survived))
+    #print(sess.run(passenger_id))
+    #print(sess.run(name))
+    
+    print(sess.run(data))
 
     #evaluate(sess, X, Y)
     coord.request_stop()
