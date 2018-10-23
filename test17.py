@@ -11,7 +11,7 @@ def inference(X):
     return tf.nn.softmax(combine_inputs(X))
 
 def loss(X, Y):
-    return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=combine_inputs(X), logits=Y))
+    return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=combine_inputs(X), labels=Y))
 
 def read_cvs(batch_size, file_name, record_defaults):
     print("read_csv(), file_name: %s" % file_name)
@@ -22,14 +22,11 @@ def read_cvs(batch_size, file_name, record_defaults):
 
     decorded = tf.decode_csv(value, record_defaults=record_defaults)
     return tf.train.shuffle_batch(decorded, batch_size=batch_size, capacity=batch_size * 50, min_after_dequeue=batch_size)
+    #return tf.train.batch(decorded, batch_size=batch_size, capacity=batch_size * 50)
 
 def inputs():
-    print("inputs()")
     sepal_length, speal_width, petal_length, petal_width, label = \
-        read_cvs(1, "./datasets/iris.data",
-            [[0.0], [0.0], [0.0], [0.0], [""]])
-
-    #print("label:", sess.run(label))
+        read_cvs(100, "./datasets/iris.data", [[0.0], [0.0], [0.0], [0.0], [""]])
 
     label_number = tf.to_int32(tf.argmax(tf.to_int32(tf.stack([
         tf.equal(label, ["Iris-setosa"]),
@@ -51,31 +48,21 @@ def evaluate(sess, X, Y):
 
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
+    tf.local_variables_initializer().run()
     X, Y, label = inputs()
-    #total_loss = loss(X, Y)
-    #train_op = train(total_loss)
-
-    #sepal_length, speal_width, petal_length, petal_width, label = \
-        #read_cvs(100, "./datasets/iris.data", [[0.0], [0.0], [0.0], [0.0], [""]])
+    total_loss = loss(X, Y)
+    train_op = train(total_loss)
 
     coord = tf.train.Coordinator()
     threads = tf.train.start_queue_runners(sess=sess, coord=coord)
 
     training_steps = 10000
+    for step in range(training_steps):
+        sess.run([train_op])
+        if step % 100 == 0:
+           print("loss: ", sess.run([total_loss]))
 
-    print("Label:", sess.run(label))
-    print("X: ", sess.run(X))
-    print("Y: ", sess.run(Y))
-    #for step in range(training_steps):
-        #sess.run([train_op])
-
-        #if step % 100 == 0:
-           #print("loss: ", sess.run([total_loss]))
-
-    #print(sess.run(passenger_id))
-    #print(sess.run(survived))
-
-    #evaluate(sess, X, Y)
+    evaluate(sess, X, Y)
     coord.request_stop()
     coord.join(threads) 
 
